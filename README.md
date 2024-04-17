@@ -15,6 +15,39 @@ udev dosfstools uuid-runtime git-lfs device-tree-compiler python2 python3 \
 python-is-python3 fdisk bc debhelper python3-pyelftools python3-setuptools \
 python3-distutils python3-pkg-resources swig libfdt-dev libpython3-dev
 ```
+
+## [Optional] Apply linux-hardened patch to the source code:
+
+```shell
+wget https://github.com/anthraxx/linux-hardened/releases/download/6.6.22-hardened1/linux-hardened-6.6.22-hardened1.patch -O patches/kernel/0006-linux-hardened-6.6.22-hardened1.patch
+
+cat <<EOF >> patches/kernel-overlay/arch/arm64/configs/mixtile_edge2_defconfig
+# Basic kernel hardening options (specific to arm64)
+
+# Make sure PAN emulation is enabled.
+CONFIG_ARM64_SW_TTBR0_PAN=y
+
+# Software Shadow Stack or PAC
+CONFIG_SHADOW_CALL_STACK=y
+
+# Pointer authentication (ARMv8.3 and later). If hardware actually supports
+# it, one can turn off CONFIG_STACKPROTECTOR_STRONG with this enabled.
+CONFIG_ARM64_PTR_AUTH=y
+CONFIG_ARM64_PTR_AUTH_KERNEL=y
+
+# Available in ARMv8.5 and later.
+CONFIG_ARM64_BTI=y
+CONFIG_ARM64_BTI_KERNEL=y
+CONFIG_ARM64_MTE=y
+CONFIG_KASAN_HW_TAGS=y
+CONFIG_ARM64_E0PD=y
+
+# Available in ARMv8.7 and later.
+CONFIG_ARM64_EPAN=y
+EOF
+
+```
+
 ## Build System Images:
 
 ### 1. Build u-boot & kernel:
