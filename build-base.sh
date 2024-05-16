@@ -15,8 +15,8 @@ KERNEL_SITE="https://cdn.kernel.org/pub/linux/kernel/v6.x/${KERNEL_ARCHIVE}"
 
 JOBS=$(nproc)
 
-export ROCKCHIP_TPL="${ARCHIVE_DIR}/rk3568_ddr_1332MHz_v1.16.bin"
-export BL31="${ARCHIVE_DIR}/rk3568_bl31_v1.42.elf"
+export ROCKCHIP_TPL="${ARCHIVE_DIR}/rk3568_ddr_1560MHz_v1.21.bin"
+export BL31="${ARCHIVE_DIR}/rk3568_bl31_v1.44.elf"
 
 mkdir -p ${ARCHIVE_DIR} ${DEPLOY_DIR}
 
