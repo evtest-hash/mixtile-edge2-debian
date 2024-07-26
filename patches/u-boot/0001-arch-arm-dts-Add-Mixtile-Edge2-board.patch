@@ -1,132 +1,176 @@
-diff --git a/arch/arm/dts/Makefile b/arch/arm/dts/Makefile
-index 9d28a485..dbc36d9b 100644
---- a/arch/arm/dts/Makefile
-+++ b/arch/arm/dts/Makefile
-@@ -181,6 +181,7 @@ dtb-$(CONFIG_ROCKCHIP_RK3568) += \
- 	rk3568-bpi-r2-pro.dtb \
- 	rk3568-evb.dtb \
- 	rk3568-lubancat-2.dtb \
-+	rk3568-mixtile-edge2.dtb \
- 	rk3568-nanopi-r5c.dtb \
- 	rk3568-nanopi-r5s.dtb \
- 	rk3568-odroid-m1.dtb \
---- /dev/null
-+++ b/arch/arm/dts/rk3568-mixtile-edge2.dts
-@@ -0,0 +1,8 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+#include "rk3568-evb.dts"
-+
-+/ {
-+	model = "Mixtile Edge 2";
-+	compatible = "focalcrest,mixtile-edge2-ddr4", "rockchip,rk3568";
-+};
---- /dev/null
-+++ b/arch/arm/dts/rk3568-mixtile-edge2-u-boot.dtsi
-@@ -0,0 +1,19 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * (C) Copyright 2021 Rockchip Electronics Co., Ltd
-+ */
-+
-+#include "rk356x-u-boot.dtsi"
-+
-+/ {
-+	chosen {
-+		stdout-path = &uart2;
-+		u-boot,spl-boot-order = "same-as-spl", &sdhci, &sdmmc0 ;
-+	};
-+};
-+
-+&uart2 {
-+	clock-frequency = <24000000>;
-+	bootph-pre-ram;
-+	status = "okay";
-+};
+diff --git a/configs/mixtile-edge2-rk3568_defconfig b/configs/mixtile-edge2-rk3568_defconfig
+new file mode 100644
+index 0000000000..4eabe182fe
 --- /dev/null
 +++ b/configs/mixtile-edge2-rk3568_defconfig
-@@ -0,0 +1,84 @@
+@@ -0,0 +1,90 @@
 +CONFIG_ARM=y
 +CONFIG_SKIP_LOWLEVEL_INIT=y
 +CONFIG_COUNTER_FREQUENCY=24000000
 +CONFIG_ARCH_ROCKCHIP=y
-+CONFIG_TEXT_BASE=0x00a00000
-+CONFIG_SPL_LIBCOMMON_SUPPORT=y
-+CONFIG_SPL_LIBGENERIC_SUPPORT=y
-+CONFIG_NR_DRAM_BANKS=2
-+CONFIG_HAS_CUSTOM_SYS_INIT_SP_ADDR=y
-+CONFIG_CUSTOM_SYS_INIT_SP_ADDR=0xc00000
-+CONFIG_DEFAULT_DEVICE_TREE="rk3568-mixtile-edge2"
++CONFIG_SF_DEFAULT_SPEED=24000000
++CONFIG_DEFAULT_DEVICE_TREE="rockchip/rk3568-mixtile-edge2"
 +CONFIG_ROCKCHIP_RK3568=y
-+CONFIG_SPL_ROCKCHIP_COMMON_BOARD=y
++CONFIG_ROCKCHIP_SPI_IMAGE=y
 +CONFIG_SPL_SERIAL=y
-+CONFIG_SPL_STACK_R_ADDR=0x600000
-+CONFIG_SPL_STACK=0x400000
 +CONFIG_DEBUG_UART_BASE=0xFE660000
 +CONFIG_DEBUG_UART_CLOCK=24000000
++CONFIG_SPL_SPI_FLASH_SUPPORT=y
++CONFIG_SPL_SPI=y
 +CONFIG_SYS_LOAD_ADDR=0xc00800
 +CONFIG_DEBUG_UART=y
 +CONFIG_FIT=y
 +CONFIG_FIT_VERBOSE=y
++CONFIG_SPL_FIT_SIGNATURE=y
 +CONFIG_SPL_LOAD_FIT=y
++# CONFIG_BOOTMETH_VBE is not set
++CONFIG_LEGACY_IMAGE_FORMAT=y
 +CONFIG_BOOTDELAY=0
 +CONFIG_AUTOBOOT_KEYED=y
 +CONFIG_AUTOBOOT_KEYED_CTRLC=y
++CONFIG_USE_PREBOOT=y
++CONFIG_PREBOOT="echo Read loader button status;KEY_LOADER=30;if gpio input $KEY_LOADER; then echo Enter Rockusb Mode...; rockusb 0 mmc 0;fi;"
 +CONFIG_DEFAULT_FDT_FILE="rockchip/rk3568-mixtile-edge2.dtb"
 +# CONFIG_DISPLAY_CPUINFO is not set
 +CONFIG_DISPLAY_BOARDINFO_LATE=y
++CONFIG_LAST_STAGE_INIT=y
 +CONFIG_SPL_MAX_SIZE=0x40000
 +CONFIG_SPL_PAD_TO=0x7f8000
-+CONFIG_SPL_HAS_BSS_LINKER_SECTION=y
-+CONFIG_SPL_BSS_START_ADDR=0x4000000
-+CONFIG_SPL_BSS_MAX_SIZE=0x4000
 +# CONFIG_SPL_RAW_IMAGE_SUPPORT is not set
-+# CONFIG_SPL_SHARES_INIT_SP_ADDR is not set
-+CONFIG_SPL_STACK_R=y
++CONFIG_SPL_SPI_LOAD=y
++CONFIG_SYS_SPI_U_BOOT_OFFS=0x60000
 +CONFIG_SPL_ATF=y
 +CONFIG_CMD_GPIO=y
 +CONFIG_CMD_GPT=y
-+CONFIG_CMD_I2C=y
 +CONFIG_CMD_MMC=y
-+CONFIG_CMD_USB=y
++CONFIG_CMD_ROCKUSB=y
++CONFIG_CMD_USB_MASS_STORAGE=y
 +# CONFIG_CMD_SETEXPR is not set
-+CONFIG_CMD_PMIC=y
-+CONFIG_CMD_REGULATOR=y
 +# CONFIG_SPL_DOS_PARTITION is not set
++# CONFIG_ISO_PARTITION is not set
 +CONFIG_SPL_OF_CONTROL=y
 +CONFIG_OF_LIVE=y
 +CONFIG_OF_SPL_REMOVE_PROPS="clock-names interrupt-parent assigned-clocks assigned-clock-rates assigned-clock-parents"
++CONFIG_SYS_RELOC_GD_ENV_ADDR=y
++# CONFIG_NET is not set
++CONFIG_SPL_DM_SEQ_ALIAS=y
 +CONFIG_SPL_REGMAP=y
 +CONFIG_SPL_SYSCON=y
++# CONFIG_ADC is not set
 +CONFIG_SPL_CLK=y
++# CONFIG_USB_FUNCTION_FASTBOOT is not set
 +CONFIG_ROCKCHIP_GPIO=y
-+CONFIG_SYS_I2C_ROCKCHIP=y
 +CONFIG_MISC=y
++# CONFIG_ROCKCHIP_IODOMAIN is not set
 +CONFIG_SUPPORT_EMMC_RPMB=y
 +CONFIG_MMC_DW=y
 +CONFIG_MMC_DW_ROCKCHIP=y
 +CONFIG_MMC_SDHCI=y
 +CONFIG_MMC_SDHCI_SDMA=y
 +CONFIG_MMC_SDHCI_ROCKCHIP=y
-+CONFIG_ETH_DESIGNWARE=y
-+CONFIG_GMAC_ROCKCHIP=y
++CONFIG_SF_DEFAULT_BUS=4
++CONFIG_SPI_FLASH_SFDP_SUPPORT=y
++CONFIG_SPI_FLASH_GIGADEVICE=y
++CONFIG_SPI_FLASH_MACRONIX=y
++CONFIG_SPI_FLASH_SILICONKAISER=y
++CONFIG_SPI_FLASH_WINBOND=y
++CONFIG_SPI_FLASH_XMC=y
++CONFIG_SPI_FLASH_XTX=y
 +CONFIG_PHY_ROCKCHIP_INNO_USB2=y
-+CONFIG_PHY_ROCKCHIP_NANENG_COMBOPHY=y
 +CONFIG_SPL_PINCTRL=y
-+CONFIG_DM_PMIC=y
-+CONFIG_PMIC_RK8XX=y
-+CONFIG_REGULATOR_RK8XX=y
-+CONFIG_PWM_ROCKCHIP=y
 +CONFIG_SPL_RAM=y
 +CONFIG_BAUDRATE=1500000
 +CONFIG_DEBUG_UART_SHIFT=2
 +CONFIG_SYS_NS16550_MEM32=y
++CONFIG_ROCKCHIP_SFC=y
 +CONFIG_SYSRESET=y
++CONFIG_SYSRESET_PSCI=y
 +CONFIG_USB=y
-+CONFIG_USB_XHCI_HCD=y
-+CONFIG_USB_XHCI_DWC3=y
-+CONFIG_USB_EHCI_HCD=y
-+CONFIG_USB_EHCI_GENERIC=y
-+CONFIG_USB_OHCI_HCD=y
-+CONFIG_USB_OHCI_GENERIC=y
 +CONFIG_USB_DWC3=y
++CONFIG_USB_DWC3_GENERIC=y
++CONFIG_USB_GADGET=y
++CONFIG_USB_GADGET_DOWNLOAD=y
++CONFIG_USB_FUNCTION_ROCKUSB=y
++CONFIG_REGEX=y
++CONFIG_ERRNO_STR=y
++# CONFIG_EFI_LOADER is not set
+diff --git a/dts/upstream/src/arm64/rockchip/rk3568-mixtile-edge2.dts b/dts/upstream/src/arm64/rockchip/rk3568-mixtile-edge2.dts
+new file mode 100644
+index 0000000000..d2cf31c776
+--- /dev/null
++++ b/dts/upstream/src/arm64/rockchip/rk3568-mixtile-edge2.dts
+@@ -0,0 +1,61 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/dts-v1/;
++#include "rk356x.dtsi"
++
++/ {
++	model = "Mixtile Edge 2";
++	compatible = "focalcrest,mixtile-edge2", "rockchip,rk3568";
++
++	aliases {
++		mmc0 = &sdhci;
++		mmc1 = &sdmmc0;
++	};
++
++	chosen {
++		stdout-path = "serial2:1500000n8";
++	};
++};
++
++&sdhci {
++	bus-width = <8>;
++	cap-mmc-highspeed;
++	mmc-hs200-1_8v;
++	no-sd;
++	no-sdio;
++	non-removable;
++	pinctrl-names = "default";
++	pinctrl-0 = <&emmc_bus8 &emmc_clk &emmc_cmd &emmc_datastrobe>;
++	status = "okay";
++};
++
++&sdmmc0 {
++	bus-width = <4>;
++	cap-sd-highspeed;
++	disable-wp;
++	no-mmc;
++	no-sdio;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;
++	status = "okay";
++};
++
++&uart2 {
++	status = "okay";
++};
++
++&usb_host0_xhci {
++	dr_mode = "peripheral";
++	extcon = <&usb2phy0>;
++	maximum-speed = "high-speed";
++	phys = <&usb2phy0_otg>;
++	phy-names = "usb2-phy";
++	status = "okay";
++};
++
++&usb2phy0 {
++	status = "okay";
++};
++
++&usb2phy0_otg {
++	status = "okay";
++};
+diff --git a/arch/arm/include/asm/arch-rockchip/f_rockusb.h b/arch/arm/include/asm/arch-rockchip/f_rockusb.h
+index e9c7f79339..2d8afea114 100644
+--- a/arch/arm/include/asm/arch-rockchip/f_rockusb.h
++++ b/arch/arm/include/asm/arch-rockchip/f_rockusb.h
+@@ -19,7 +19,7 @@
+ #define RX_ENDPOINT_MAXIMUM_PACKET_SIZE_1_1  0x0040
+ #define TX_ENDPOINT_MAXIMUM_PACKET_SIZE      0x0040
+ 
+-#define EP_BUFFER_SIZE			4096
++#define EP_BUFFER_SIZE			4096*1024
+ /*
+  * EP_BUFFER_SIZE must always be an integral multiple of maxpacket size
+  * (64 or 512 or 1024), else we break on certain controllers like DWC3
